@@ -42,20 +42,22 @@ class gameEngine:
                     count = 0
 
     def checkDiagonalWin(self):
-        count = 1
+        count = 0
         for row in range(self.height-1, -1, -1):
             for col in range(self.width):
                 for i in range(4):
-                    if row + i < self.height -1 and col + i < self.width -1:
-                        if self.gameboard[row+i][col+i] == self.currentPlayer:
+                    if row - i > 0 and col + i < self.width -1:
+                        if self.gameboard[row-i][col+i] == self.currentPlayer:
                             count += 1
                             if count == 4:
                                 self.winner = self.currentPlayer
                         else:
                             count = 0
+                            
+                count = 0
                 for i in range(4):
-                    if row + i < self.height and col - i > 0:
-                        if self.gameboard[row+i][col-i] == self.currentPlayer:
+                    if row - i > 0 and col - i > 0:
+                        if self.gameboard[row-i][col-i] == self.currentPlayer:
                             count += 1
                             if count == 4:
                                 self.winner = self.currentPlayer
