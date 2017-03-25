@@ -1,1 +1,2 @@
 # ConnectFourPy
+### Author: Jason Bensel
