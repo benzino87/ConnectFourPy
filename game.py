@@ -13,7 +13,12 @@ pygame.init()
 size = width, height = 640, 480
 screen = pygame.display.set_mode(size)
 
+#SET CAPION
+pygame.display.set_caption('Connect Nukem 4')
+
 #IMAGES
+bg = pygame.image.load('img/dukenukem.jpg')
+target = pygame.image.load('img/target.png')
 redimage = pygame.image.load('img/red_gamepiece.png')
 blueimage = pygame.image.load('img/blue_gamepiece.png')
 explosion = pygame.image.load('img/explosion.png')
@@ -28,6 +33,8 @@ bubblegum.play()
 
 
 #RESIZE IMAGES
+bg = pygame.transform.scale(bg, size)
+target = pygame.transform.scale(target, (15, 15))
 redimage = pygame.transform.scale(redimage, (60,40))
 blueimage = pygame.transform.scale(blueimage, (64,46))
 explosion = pygame.transform.scale(explosion, (60, 46))
@@ -58,7 +65,7 @@ engine = gameEngine(10, 10)
 def drawscreen():
 
     #redraw screen
-    screen.fill(BLACK)
+    screen.blit(bg, (0,0))
 
     #Draw grid for gameboard
     for i in range(10):
@@ -77,6 +84,9 @@ def drawscreen():
     #draw buttons
     for i in range(10):
         pygame.draw.rect(screen, WHITE, buttons[i])
+        x = buttons[i].x
+        y = buttons[i].y
+        screen.blit(target, (x+23, y))
 
     #redraw each gampiece
     for p in gamepieces:
