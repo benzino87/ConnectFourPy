@@ -14,8 +14,10 @@ size = width, height = 640, 480
 screen = pygame.display.set_mode(size)
 
 #IMAGES
-redimage = pygame.image.load('red_gamepiece.png')
-blueimage = pygame.image.load('blue_gamepiece.png')
+redimage = pygame.image.load('img/red_gamepiece.png')
+blueimage = pygame.image.load('img/blue_gamepiece.png')
+explosion = pygame.image.load('img/explosion.png')
+nuke = pygame.image.load('img/nuke.png')
 
 #WAV FILES
 sounds = ["bitchin.wav", "cry.wav", "cya_n_hell.wav", "getsome.wav", "gotta_hurt.wav", "hail.wav", "imgood.wav", "medieval.wav", "you_suck.wav", "you_will_die.wav"]
@@ -28,6 +30,9 @@ bubblegum.play()
 #RESIZE IMAGES
 redimage = pygame.transform.scale(redimage, (60,40))
 blueimage = pygame.transform.scale(blueimage, (64,46))
+explosion = pygame.transform.scale(explosion, (60, 46))
+nuke = pygame.transform.scale(nuke, (60, 46))
+nuke = pygame.transform.rotate(nuke, 270)
 
 #COLORS   R   G   B
 WHITE = (225,225,225)
@@ -75,6 +80,8 @@ def drawscreen():
 
     #redraw each gampiece
     for p in gamepieces:
+        if p.isPlaced == True:
+            p.changeimg()
         p.move()
         screen.blit(p.image, p.pos)
 
@@ -108,9 +115,9 @@ while(1):
                     if rowplaced == -1:
                         break
                     if engine.currentPlayer == 1:
-                        piece = gamepiece(redimage, 64*i, 0, 10, rowplaced)
+                        piece = gamepiece(nuke, redimage, explosion, 64*i, 0, 10, rowplaced)
                     else:
-                        piece = gamepiece(blueimage, 64*i, 0, 10, rowplaced)
+                        piece = gamepiece(nuke, blueimage, explosion, 64*i, 0, 10, rowplaced)
 
                     sound = pygame.mixer.Sound("sounds/"+sounds[randint(0, len(sounds)-1)])
                     sound.play()
