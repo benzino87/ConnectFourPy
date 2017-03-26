@@ -1,16 +1,60 @@
-import pygame, sys
-import gamepiece
-import gameEngine
+import pygame, sys, getopt, pickle
 from gamepiece import *
 from gameEngine import *
 from pygame.locals import *
 from random import randint
 
+gwidth = 10
+gheight = 10
+gsquare = None
+gconnect = 4
+gload = None
+
+try:
+    opts, args = getopt.getopt(sys.argv[1:], "whc:wh:sc:w:h:s:c:l", ["width=","height=","connect=","square=","load="])
+    for opt, arg in opts:
+        try:
+            if opt in ("-w", "--width"):
+                gwidth = int(arg)
+            if opt in ("-h", "--height"):
+                gheight = int(arg)
+            if opt in ("-s", "--square"):
+                gsquare = int(arg)
+            if opt in ("-c", "--connect"):
+                gconnect = int(arg)
+            if opt in ("-l", "--load"):
+                gload = arg
+        except:
+            print("Not a valid number")
+            sys.exit(2)
+except getopt.GetoptError:
+    print("-w <width> -h <height> -c <connect> -s <square> -l <load>")
+    sys.exit(2)
+
+if gsquare != None:
+    gheight = gsquare
+    gwidth = gsquare
+
+#Initialize game engine
+if gload != None:
+    loadengine = pickle.load(open(gload, "rb"))
+    gwidth = loadengine.width
+    gheight = loadengine.height
+    gconnect = loadengine.connect
+    engine = gameEngine(loadengine.width, loadengine.height, loadengine.connect)
+else:
+    engine = gameEngine(gwidth, gheight, gconnect)
+
+
+
 #Initialize pygame
 pygame.init()
 
 #SCREEN SIZE
-size = width, height = 640, 480
+width = 64*gwidth
+height = 48*gheight
+size = width, height
+print(size)
 screen = pygame.display.set_mode(size)
 
 #SET CAPION
@@ -51,14 +95,23 @@ gamepieces = []
 #List of all buttons (for drawing)
 buttons = []
 
+#create savebutton
+save = pygame.Rect(0, 0, 64, 20)
+font = pygame.font.SysFont('Comic Sans MS', 12)
+text = "SAVE"
+savetext = font.render(text, False, BLACK)
+
+
 #Create button rectangles and add to buttons
-for i in range(10):
-    button = pygame.Rect(64*i+2, 462, 60, 15)
+for i in range(gwidth):
+    button = pygame.Rect(64*i+2, 46*gheight+2, 60, 15)
     buttons.append(button)
 
-#Initialize game engine
-engine = gameEngine(10, 10)
 
+
+def savegame():
+    print(engine)
+    pickle.dump(engine, open("gamesave.p", "wb"))
 ###
 # Function for redrawing screen for every game loop
 ###
@@ -66,23 +119,25 @@ def drawscreen():
 
     #redraw screen
     screen.blit(bg, (0,0))
-
+    pygame.draw.rect(screen, WHITE, save)
+    screen.blit(savetext,(0,0))
     #Draw grid for gameboard
-    for i in range(10):
+    for i in range(gwidth):
         #draw vertical lines
         #            (x  ,  y)
         startpoint = 64*i, 0
-        endpoint = 64*i, 460
+        endpoint = 64*i, 46*gheight
         pygame.draw.line(screen, WHITE, startpoint, endpoint)
 
+    for i in range(gheight):
         #draw horizontal lines
         startpoint = 0, 46*i
-        endpoint = 640, 46*i
+        endpoint = 64*gwidth, 46*i
         pygame.draw.line(screen, WHITE, startpoint, endpoint)
 
 
     #draw buttons
-    for i in range(10):
+    for i in range(gwidth):
         pygame.draw.rect(screen, WHITE, buttons[i])
         x = buttons[i].x
         y = buttons[i].y
@@ -119,7 +174,9 @@ while(1):
         #check if clicked
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos
-            for i in range(10):
+            if save.collidepoint(x, y):
+                savegame()
+            for i in range(gwidth):
                 if buttons[i].collidepoint(x, y):
                     rowplaced = engine.playerMove(i)
                     if rowplaced == -1:

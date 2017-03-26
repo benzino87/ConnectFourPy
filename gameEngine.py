@@ -1,7 +1,9 @@
+import pickle
 class gameEngine:
-    def __init__(self, width, height):
+    def __init__(self, width, height, connect):
         self.width = width
         self.height = height
+        self.connect = connect
         self.gameboard = [[0]*width for i in range(height)]
         print(self.gameboard)
         self.currentPlayer = 1
@@ -25,7 +27,7 @@ class gameEngine:
             for row in range(self.height-1, -1, -1):
                 if self.gameboard[row][col] == self.currentPlayer:
                     count += 1
-                    if count == 4:
+                    if count == self.connect:
                         self.winner = self.currentPlayer
                 else:
                     count = 0
@@ -36,7 +38,7 @@ class gameEngine:
             for col in range(self.width):
                 if self.gameboard[row][col] == self.currentPlayer:
                     count += 1
-                    if count == 4:
+                    if count == self.connect:
                         self.winner = self.currentPlayer
                 else:
                     count = 0
@@ -45,21 +47,28 @@ class gameEngine:
         count = 0
         for row in range(self.height-1, -1, -1):
             for col in range(self.width):
-                for i in range(4):
+                for i in range(self.connect):
                     if row - i > 0 and col + i < self.width -1:
                         if self.gameboard[row-i][col+i] == self.currentPlayer:
                             count += 1
-                            if count == 4:
+                            if count == self.connect:
                                 self.winner = self.currentPlayer
                         else:
                             count = 0
-                            
+
                 count = 0
-                for i in range(4):
+                for i in range(self.connect):
                     if row - i > 0 and col - i > 0:
                         if self.gameboard[row-i][col-i] == self.currentPlayer:
                             count += 1
-                            if count == 4:
+                            if count == self.connect:
                                 self.winner = self.currentPlayer
                         else:
                             count = 0
+
+    # def save(self):
+    #     gamestatus = [self.gameboard, self.height, self.width, self.connect, self.currentPlayer]
+    #     pickle.dump(gamestatus, open("gamesave.p", "wb"))
+
+    # def load(self):
+    #     gamestatus = pickle.load("gamesave.p", "rb")
