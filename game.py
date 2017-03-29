@@ -1,15 +1,28 @@
+###
+#
+# AUTHOR: Jason Bensel
+# DESCRIPTION: Initializes game engine and contains most functionality for
+#              placement of images, including displaying the gameboard
+#
+# DATE 3/29/2017
+#
+###
+
+#!/usr/bin/env python3
 import pygame, sys, getopt, pickle
 from gamepiece import *
 from gameEngine import *
 from pygame.locals import *
 from random import randint
 
-gwidth = 10
-gheight = 10
-gsquare = None
-gconnect = 4
-gload = None
+                    #GLOBALS    www.goo
+gwidth = 10         #Width of gameboard
+gheight = 10        #Height of gameboard
+gsquare = None      #Square gameboard
+gconnect = 4        #Required connections
+gload = None        #Loaded filename
 
+#Argument handler
 try:
     opts, args = getopt.getopt(sys.argv[1:], "whc:wh:sc:w:h:s:c:l", ["width=","height=","connect=","square=","load="])
     for opt, arg in opts:
@@ -31,6 +44,7 @@ except getopt.GetoptError:
     print("-w <width> -h <height> -c <connect> -s <square> -l <load>")
     sys.exit(2)
 
+#If square parameter is given assign to height and width for game engine object
 if gsquare != None:
     gheight = gsquare
     gwidth = gsquare
@@ -71,9 +85,7 @@ nuke = pygame.image.load('img/nuke.png')
 #WAV FILES
 sounds = ["bitchin.wav", "cry.wav", "cya_n_hell.wav", "getsome.wav", "gotta_hurt.wav", "hail.wav", "imgood.wav", "medieval.wav", "you_suck.wav", "you_will_die.wav"]
 bubblegum = pygame.mixer.Sound("sounds/gum.wav")
-#shotgun = pygame.mixer.Sound("mossberg.wav")
 bubblegum.play()
-#shotgun.play()
 
 
 #RESIZE IMAGES
@@ -90,10 +102,9 @@ WHITE = (225,225,225)
 BLUE = (0, 0, 225)
 BLACK = (0, 0, 0)
 
-#List of all added game pieces (for drawing)
-gamepieces = []
-#List of all buttons (for drawing)
-buttons = []
+
+gamepieces = []     #List of all added game pieces (for drawing)
+buttons = []        #List of all buttons (for drawing)
 
 #create savebutton
 save = pygame.Rect(0, 0, 64, 20)
@@ -108,10 +119,13 @@ for i in range(gwidth):
     buttons.append(button)
 
 
-
+###
+# Saves game state
+###
 def savegame():
     print(engine)
     pickle.dump(engine, open("gamesave.p", "wb"))
+
 ###
 # Function for redrawing screen for every game loop
 ###
@@ -121,10 +135,10 @@ def drawscreen():
     screen.blit(bg, (0,0))
     pygame.draw.rect(screen, WHITE, save)
     screen.blit(savetext,(0,0))
+
     #Draw grid for gameboard
     for i in range(gwidth):
         #draw vertical lines
-        #            (x  ,  y)
         startpoint = 64*i, 0
         endpoint = 64*i, 46*gheight
         pygame.draw.line(screen, WHITE, startpoint, endpoint)
